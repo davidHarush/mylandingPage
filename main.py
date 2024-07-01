@@ -4,21 +4,14 @@ import requests
 import streamlit as st
 import base64
 import openai
-import time
-from openai import OpenAI
 
 openai.api_key = st.secrets["openai"]["api_key"]
 
-# שלושה פרומפטים לבחירה
 prompts = [
     "a beautiful sunrise over a majestic mountain range with vibrant orange and pink hues lighting up the sky, and a serene lake reflecting the colors",
     "a bustling cityscape at night with glowing neon lights, towering skyscrapers, busy streets filled with cars, and a starry sky above",
     "a serene beach with crystal clear turquoise waters, soft white sand, gently swaying palm trees, and a stunning sunset painting the sky with shades of purple and gold"
 ]
-
-
-
-# הצגת Radio Button לבחירת פרומפט
 
 def get_image_from_DALL_E_3_API(user_prompt,):
     response = openai.images.generate(
