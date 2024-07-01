@@ -1,26 +1,21 @@
+import webbrowser
 from io import BytesIO
 
 import requests
 import streamlit as st
 import base64
 import openai
-import time
-from openai import OpenAI
 
-openai.api_key = "sk-proj-xKEUI6Ec8BUCV7joSK6kT3BlbkFJtyo5EHrMbDM1tTyNTF8d"
+openai.api_key = st.secrets["openai"]["api_key"]
 
-# שלושה פרומפטים לבחירה
 prompts = [
-    "a beautiful sunrise over a majestic mountain range with vibrant orange and pink hues lighting up the sky, and a serene lake reflecting the colors",
-    "a bustling cityscape at night with glowing neon lights, towering skyscrapers, busy streets filled with cars, and a starry sky above",
-    "a serene beach with crystal clear turquoise waters, soft white sand, gently swaying palm trees, and a stunning sunset painting the sky with shades of purple and gold"
+    "a beautiful sunrise over a majestic mountain range with vibrant orange and pink hues lighting up the sky, and a serene lake reflecting the colors, in a watercolor painting style",
+    "a bustling cityscape at night with glowing neon lights, towering skyscrapers, busy streets filled with cars, and a starry sky above, in a realistic style",
+    "a serene beach with crystal clear turquoise waters, soft white sand, gently swaying palm trees, and a stunning sunset painting the sky with shades of purple and gold, in a surrealistic style"
 ]
 
 
-
-# הצגת Radio Button לבחירת פרומפט
-
-def get_image_from_DALL_E_3_API(user_prompt,):
+def get_image_from_DALL_E_3_API(user_prompt, ):
     response = openai.images.generate(
         model="dall-e-3",
         prompt=user_prompt,
@@ -42,6 +37,9 @@ def get_image_base64_from_url(image_url):
 def get_image_base64(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode()
+
+def openUrl(url):
+    webbrowser.open_new(url)
 
 
 st.set_page_config(layout="wide")
@@ -169,9 +167,7 @@ st.markdown("""
 </p>
 """, unsafe_allow_html=True)
 if st.button('Go to GitHub Project'):
-    js = "window.open('https://github.com/davidHarush/TheMovieDbLab')"  # Open new tab
-    html = f"<script>{js}</script>"
-    st.markdown(html, unsafe_allow_html=True)
+    openUrl('https://github.com/davidHarush/TheMovieDbLab')
 
 st.markdown('<div class="your-class">', unsafe_allow_html=True)
 st.markdown(f"""
@@ -274,10 +270,18 @@ if st.button('Create Image'):
         image_url = get_image_from_DALL_E_3_API(selected_prompt)
         image_base64 = get_image_base64_from_url(image_url)
         st.session_state['image'] = image_base64
-
+        st.session_state['image_url'] = image_url
 
 if 'image' in st.session_state:
     st.markdown(f'<div style="display: flex; justify-content: center;"><img id="dynamic-image" '
                 f'src="data:image/png;base64,{st.session_state["image"]}" alt="Dynamic Image" style="max-width: 70%; '
                 f'height: auto;"></div>',
                 unsafe_allow_html=True)
+
+    if st.session_state["image"]:
+        image_filename = "generated_image.png"
+        b64 = st.session_state["image"]
+        st.download_button(label="Download Image", data=base64.b64decode(b64), file_name=image_filename,
+                           mime="image/png")
+
+
