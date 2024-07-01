@@ -7,7 +7,7 @@ import openai
 import time
 from openai import OpenAI
 
-openai.api_key = "sk-proj-xKEUI6Ec8BUCV7joSK6kT3BlbkFJtyo5EHrMbDM1tTyNTF8d"
+openai.api_key = st.secrets["openai"]["api_key"]
 
 # שלושה פרומפטים לבחירה
 prompts = [
