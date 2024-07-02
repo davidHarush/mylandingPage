@@ -261,10 +261,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-st.success("Now lets have some Fun!!")
-selected_prompt = st.radio("Choose a prompt to generate an image:", prompts)
+st.header("Now lets have some Fun!!")
+st.success("we will use DALL-E-3 API to generate images based on the prompt you choose.")
+selected_prompt = st.radio("Choose a prompt please:", prompts)
 
 if st.button('Create Image'):
+    st.balloons()
     with st.spinner('Creating image using DALL-E-3 API...'):
         image_url = get_image_from_DALL_E_3_API(selected_prompt)
         image_base64 = get_image_base64_from_url(image_url)
