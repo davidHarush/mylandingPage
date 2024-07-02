@@ -190,9 +190,8 @@ st.markdown('<div class="project">', unsafe_allow_html=True)
 st.markdown('<h2>Professional Experience</h2>', unsafe_allow_html=True)
 st.markdown("""
 **2023 – Present: Android/Flutter Developer at Zemingo**
-- Specializes in Android, iOS, and Flutter development.
-- Currently working on an application that captures video and performs facial recognition to compare faces against a database, sending alerts via Telegram (bot API) when a face is detected.
-- Tools and technologies: Kotlin, Dart, GitHub, Bitbucket, Jira, Figma.
+- Works on a variety of projects in Android, and Flutter.
+- Tools and technologies: Kotlin, Dart, GitHub, Bitbucket, Jira, Figma etc..
 
 **2022 – 2023: Android Developer at NVIDIA**
 - Worked as a single Android developer in collaboration with software and hardware developers from India and the US.
