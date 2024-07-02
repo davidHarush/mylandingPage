@@ -9,23 +9,27 @@ import openai
 openai.api_key = st.secrets["openai"]["api_key"]
 
 prompts = [
-    "a beautiful sunrise over a majestic mountain range with vibrant orange and pink hues lighting up the sky, and a serene lake reflecting the colors, in a watercolor painting style",
+    "a beautiful sunrise over a majestic mountain range with vibrant orange and pink hues lighting up the sky, in a watercolor painting style",
     "a bustling cityscape at night with glowing neon lights, towering skyscrapers, busy streets filled with cars, and a starry sky above, in a realistic style",
-    "a serene beach with crystal clear turquoise waters, soft white sand, gently swaying palm trees, and a stunning sunset painting the sky with shades of purple and gold, in a surrealistic style"
+    "a serene beach with crystal clear turquoise waters and a stunning sunset painting the sky with shades of purple and gold, in a surrealistic style"
 ]
 
 
 def get_image_from_DALL_E_3_API(user_prompt ):
-    response = openai.images.generate(
-        model="dall-e-3",
-        prompt=user_prompt,
-        size="1792x1024",
-        quality="hd",
-        n=1,
-    )
+    try:
+        response = openai.images.generate(
+            model="dall-e-3",
+            prompt=user_prompt,
+            size="1792x1024",
+            quality="standard",
+            n=1,
+        )
+        return response.data[0].url
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+        return None
 
-    image_url = response.data[0].url
-    return image_url
+
 
 
 def get_image_base64_from_url(image_url):
@@ -269,9 +273,12 @@ if st.button('Create Image'):
     st.balloons()
     with st.spinner('Creating image using DALL-E-3 API...'):
         image_url = get_image_from_DALL_E_3_API(selected_prompt)
-        image_base64 = get_image_base64_from_url(image_url)
-        st.session_state['image'] = image_base64
-        st.session_state['image_url'] = image_url
+        if image_url:
+            image_base64 = get_image_base64_from_url(image_url)
+            st.session_state['image'] = image_base64
+            st.session_state['image_url'] = image_url
+        else:
+            st.error("Failed to generate image. Please try again later.")
 
 if 'image' in st.session_state:
     st.markdown(f'<div style="display: flex; justify-content: center;"><img id="dynamic-image" '
