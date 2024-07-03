@@ -15,7 +15,7 @@ prompts = [
 ]
 
 
-def get_image_from_DALL_E_3_API(user_prompt ):
+def get_image_from_DALL_E_3_API(user_prompt):
     try:
         response = openai.images.generate(
             model="dall-e-3",
@@ -30,8 +30,6 @@ def get_image_from_DALL_E_3_API(user_prompt ):
         return None
 
 
-
-
 def get_image_base64_from_url(image_url):
     response = requests.get(image_url)
     image_data = BytesIO(response.content)
@@ -41,6 +39,7 @@ def get_image_base64_from_url(image_url):
 def get_image_base64(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode()
+
 
 def openUrl(url):
     webbrowser.open_new(url)
@@ -124,10 +123,64 @@ header a {
     display: none !important;
 }
 
-/* Specific to h2 headers */
 h2 a {
     display: none !important;
 }
+.center {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .download-btn {
+        background-color: #5CAF60; /* צבע ירוק רגוע */
+        color: white !important; /* צבע הטקסט */
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+        transition: transform 0.3s;
+    }
+    .download-btn:hover {
+        background-color: #45a049; /* צבע כהה יותר עבור ריחוף */
+        color: white;
+        transform: scale(1.1);
+    }
+    
+/* Responsive design for mobile devices */
+@media (max-width: 600px) {
+    .header {
+        font-size: 2em;
+    }
+    .header_small {
+        font-size: 1.5em;
+    }
+    .subheader {
+        font-size: 1.2em;
+    }
+    .social img {
+        width: 50px;
+        height: 50px;
+    }
+    .your-class {
+        width: 100%;
+    }
+    .your-class img {
+        width: 100%;
+        height: auto;
+    }
+    .certification img {
+        width: 100%;
+        height: auto;
+    }
+    .center {
+        margin-top: 10px;
+    }    
+    
 </style>
 """, unsafe_allow_html=True)
 
@@ -139,6 +192,16 @@ st.markdown(
     unsafe_allow_html=True)
 st.markdown('<p class="subheader">But in personal life I am a Mushroom Hunter 🍄 and Father of twins 💪.</p>',
             unsafe_allow_html=True)
+
+# CSS to center the button
+st.markdown("""
+    <style>
+    .center {
+        display: flex;
+        justify-content: center;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 linkedin_logo = get_image_base64('linkedin.png')
 gmail_logo = get_image_base64('gmail.png')
@@ -152,13 +215,19 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="project">', unsafe_allow_html=True)
+resume_file_path = 'david_harush_cv.docx'
+with open(resume_file_path, "rb") as file:
+    resume_data = file.read()
+    b64 = base64.b64encode(resume_data).decode()
+
+    href = f'<a href="data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,{b64}" download="david_harush_cv.docx" class="download-btn">Download Resume</a>'
+
+    st.markdown(f'<div class="center">{href}</div>', unsafe_allow_html=True)
 
 project1_image = get_image_base64('project1.jpg')
 project2_image = get_image_base64('project2.jpg')
 project3_image = get_image_base64('project3.jpg')
 
-st.markdown('<div class="project">', unsafe_allow_html=True)
 st.markdown('<h2>The Movie DB Lab Project</h2>', unsafe_allow_html=True)
 st.markdown("""
 <p>
@@ -183,14 +252,12 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
-st.markdown('<div class="project">', unsafe_allow_html=True)
 st.markdown('<h2>Education</h2>', unsafe_allow_html=True)
 st.markdown("""
 2011 – 2013: B.Sc. in Computer Science, HIT
 """, unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown('<div class="project">', unsafe_allow_html=True)
 st.markdown('<h2>Professional Experience</h2>', unsafe_allow_html=True)
 st.markdown("""
 **2023 – Present: Android/Flutter Developer at Zemingo**
@@ -216,7 +283,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown('<div class="project">', unsafe_allow_html=True)
 st.markdown('<h2>Python and AI Learning Journey</h2>', unsafe_allow_html=True)
 st.markdown("""
 <p>
@@ -231,9 +297,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown('<div class="project">', unsafe_allow_html=True)
-
-st.markdown('<div class="project">', unsafe_allow_html=True)
 st.markdown('<h2>Certifications</h2>', unsafe_allow_html=True)
 st.markdown("""
 <p>
@@ -291,5 +354,3 @@ if 'image' in st.session_state:
         b64 = st.session_state["image"]
         st.download_button(label="Download Image", data=base64.b64decode(b64), file_name=image_filename,
                            mime="image/png")
-
-
