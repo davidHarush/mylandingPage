@@ -1,10 +1,10 @@
+import base64
 import webbrowser
 from io import BytesIO
 
+import openai
 import requests
 import streamlit as st
-import base64
-import openai
 
 openai.api_key = st.secrets["openai"]["api_key"]
 
@@ -13,6 +13,11 @@ prompts = [
     "a bustling cityscape at night with glowing neon lights, towering skyscrapers, busy streets filled with cars, and a starry sky above, in a realistic style",
     "a serene beach with crystal clear turquoise waters and a stunning sunset painting the sky with shades of purple and gold, in a surrealistic style"
 ]
+
+
+def get_image_base64(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
 
 
 def get_image_from_DALL_E_3_API(user_prompt):
@@ -36,6 +41,13 @@ def get_image_base64_from_url(image_url):
     return base64.b64encode(image_data.read()).decode()
 
 
+def get_image_from_url(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        return base64.b64encode(BytesIO(response.content).read()).decode()
+    return None
+
+
 def get_image_base64(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode()
@@ -49,6 +61,21 @@ st.set_page_config(layout="wide")
 
 st.markdown("""
 <style>
+    .certification img {
+        width: 200px;
+        height: auto;
+        transition: transform 0.5s;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .certification:hover img {
+        transform: scale(1.3);
+    }
+    .certification div {
+        text-align: center;
+    }
+
 .header {
     font-weight: bold;
     font-size: 3em;
@@ -150,37 +177,6 @@ h2 a {
         color: white;
         transform: scale(1.1);
     }
-    
-/* Responsive design for mobile devices */
-@media (max-width: 600px) {
-    .header {
-        font-size: 2em;
-    }
-    .header_small {
-        font-size: 1.5em;
-    }
-    .subheader {
-        font-size: 1.2em;
-    }
-    .social img {
-        width: 50px;
-        height: 50px;
-    }
-    .your-class {
-        width: 100%;
-    }
-    .your-class img {
-        width: 100%;
-        height: auto;
-    }
-    .certification img {
-        width: 100%;
-        height: auto;
-    }
-    .center {
-        margin-top: 10px;
-    }    
-    
 </style>
 """, unsafe_allow_html=True)
 
@@ -203,9 +199,9 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-linkedin_logo = get_image_base64('linkedin.png')
-gmail_logo = get_image_base64('gmail.png')
-whatsapp_logo = get_image_base64('whatsapp.png')
+linkedin_logo = get_image_base64('assets/linkedin.png')
+gmail_logo = get_image_base64('assets/gmail.png')
+whatsapp_logo = get_image_base64('assets/whatsapp.png')
 
 st.markdown(f"""
 <div class="social">
@@ -224,9 +220,9 @@ with open(resume_file_path, "rb") as file:
 
     st.markdown(f'<div class="center">{href}</div>', unsafe_allow_html=True)
 
-project1_image = get_image_base64('project1.jpg')
-project2_image = get_image_base64('project2.jpg')
-project3_image = get_image_base64('project3.jpg')
+project1_image = get_image_base64('assets/project1.jpg')
+project2_image = get_image_base64('assets/project2.jpg')
+project3_image = get_image_base64('assets/project3.jpg')
 
 st.markdown('<h2>The Movie DB Lab Project</h2>', unsafe_allow_html=True)
 st.markdown("""
@@ -297,36 +293,68 @@ st.markdown("""
 """, unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown('<h2>Certifications</h2>', unsafe_allow_html=True)
+certificates = [
+    {
+        "link": "https://www.udemy.com/certificate/UC-a31602cc-41ea-43ab-8578-74cf1c779515/",
+        "image": "https://udemy-certificate.s3.amazonaws.com/image/UC-a31602cc-41ea-43ab-8578-74cf1c779515.jpg",
+        "title": "Udemy: The Complete Flutter Bootcamp"
+    },
+    {
+        "link": "https://www.udemy.com/certificate/UC-fa9cb366-9ea7-41dc-8f05-e3d666cb5017",
+        "image": "https://udemy-certificate.s3.amazonaws.com/image/UC-fa9cb366-9ea7-41dc-8f05-e3d666cb5017.jpg",
+        "title": "Udemy: Kotlin Coroutines development"
+    },
+    {
+        "link": "https://www.linkedin.com/learning/paths/building-generative-ai-skills-for-developers",
+        "image": "assets/CertificateGenerativeAISkillsDevelopers.png",
+        "title": "LinkedIn Learning: Generative AI Skills for Developers"
+    },
+    {
+        "link": "",
+        "image": "assets/devOpsPython.png",
+        "title": "DevOps: 45 hours of Python course, completion with Honors Awarded"
+    }
+]
+
 st.markdown("""
-<p>
-  this is some of me Certifications there is a lot more, i love to learn new staff.
+    <style>
+    .certification img {
+        width: 200px;
+        height: auto;
+        transition: transform 0.3s;
+    }
+    .certification:hover img {
+        transform: scale(1.2);
+    }
+    .certification {
+        text-align: center;
+        margin: auto;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown('<h2 style="text-align: center;">Certifications</h2>', unsafe_allow_html=True)
+st.markdown("""
+<p style="text-align: center;">
+  Here are some of my certifications. I love learning new things and continuously expanding my knowledge.
 </p>
 """, unsafe_allow_html=True)
 
-st.markdown("""
-<div class="certifications">
-    <div class="certification">
-        <a href="https://www.udemy.com/certificate/UC-a31602cc-41ea-43ab-8578-74cf1c779515/" target="_blank">
-            <img src="https://udemy-certificate.s3.amazonaws.com/image/UC-a31602cc-41ea-43ab-8578-74cf1c779515.jpg?v=1661934077000" alt="Udemy: Complete Python Bootcamp">
-        </a>
-        <p>Udemy: The Complete Flutter Bootcamp</p>
-    </div>
-    <div class="certification">
-        <a href="https://www.udemy.com/certificate/UC-fa9cb366-9ea7-41dc-8f05-e3d666cb5017" target="_blank">
-            <img src="https://udemy-certificate.s3.amazonaws.com/image/UC-fa9cb366-9ea7-41dc-8f05-e3d666cb5017.jpg?v=1715588632000" alt="Coursera: Machine Learning">
-        </a>
-        <p>Udemy: Kotlin Coroutines development</p>
-    </div>
-    <div class="certification">
-        <a href="https://www.linkedin.com/learning/openai-api-for-python-developers/ai-integration-with-python" target="_blank">
-            <img src="https://media.licdn.com/dms/image/D4D22AQEaRYte3hsauQ/feedshare-shrink_1280/0/1719349489955?e=1722470400&v=beta&t=b4q45J8_1hd9atWHQtrYKnKG9mCZCjKvSjOwpMPbNr4" alt="LinkedIn Learning: Advanced Android Development">
-        </a>
-        <p>LinkedIn Learning: OpenAI API for Python Developers</p>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
+cols = st.columns(2)
+
+for idx, certificate in enumerate(certificates):
+    col = cols[idx % 2]
+    with col:
+        if certificate["image"].startswith("http"):
+            st.markdown(
+                f'<a href="{certificate["link"]}" target="_blank" class="certification"><img src="{certificate["image"]}" alt="{certificate["title"]}"></a>',
+                unsafe_allow_html=True)
+        else:
+            image_base64 = get_image_base64(certificate["image"])
+            st.markdown(
+                f'<a href="{certificate["link"]}" target="_blank" class="certification"><img src="data:image/png;base64,{image_base64}" alt="{certificate["title"]}"></a>',
+                unsafe_allow_html=True)
+        st.markdown(f'<div style="text-align: center;">{certificate["title"]}</div>', unsafe_allow_html=True)
 
 st.header("Now lets have some Fun!!")
 st.success("we will use DALL-E-3 API to generate images based on the prompt you choose.")
